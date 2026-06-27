@@ -1,0 +1,330 @@
+.pantalla-seguimiento {
+  font-family: 'Segoe UI', sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #f0f2f5;
+  padding: 0;
+}
+
+/* Header */
+.header {
+  background: #1a237e;
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  flex: 1;
+}
+
+.badge-cm {
+  background: rgba(255,255,255,0.2);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.btn-recargar {
+  background: #42a5f5;
+  color: white;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-recargar:hover:not(:disabled) { background: #1e88e5; }
+.btn-recargar:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* Alertas */
+.alerta-error {
+  background: #ffebee;
+  color: #c62828;
+  border-left: 4px solid #c62828;
+  padding: 12px 20px;
+  margin: 12px 16px;
+  border-radius: 4px;
+}
+
+.alerta-exito {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border-left: 4px solid #2e7d32;
+  padding: 12px 20px;
+  margin: 12px 16px;
+  border-radius: 4px;
+}
+
+/* Layout principal */
+.contenido-principal {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+}
+
+.contenido-principal.oculto {
+  display: none;
+}
+
+/* Panel lista */
+.panel-lista {
+  width: 380px;
+  min-width: 320px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #ddd;
+  overflow: hidden;
+}
+
+.filtros {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+  background: #fafafa;
+}
+
+.filtros h3 {
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.input-filtro {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+
+.input-filtro:focus {
+  outline: none;
+  border-color: #1a237e;
+}
+
+.lista-bolsines {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+/* Cards de bolsines */
+.card-bolsin {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.card-bolsin:hover {
+  border-color: #1a237e;
+  box-shadow: 0 3px 10px rgba(26,35,126,0.15);
+  transform: translateY(-1px);
+}
+
+.card-bolsin.seleccionado {
+  border-color: #1a237e;
+  background: #e8eaf6;
+  box-shadow: 0 3px 12px rgba(26,35,126,0.25);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #eee;
+  background: #f5f5f5;
+  border-radius: 8px 8px 0 0;
+}
+
+.numero-bolsin {
+  font-weight: 700;
+  color: #1a237e;
+  font-size: 0.95rem;
+}
+
+.badge-enviado {
+  background: #ff9800;
+  color: white;
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 10px 14px;
+}
+
+.dato {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.label {
+  font-weight: 600;
+  color: #666;
+  min-width: 75px;
+}
+
+.gps-coords {
+  font-family: monospace;
+  font-size: 0.8rem;
+  color: #1565c0;
+}
+
+.fecha-hora {
+  font-size: 0.78rem;
+  color: #888;
+}
+
+.sin-gps {
+  font-size: 0.82rem;
+  color: #e65100;
+  padding: 4px 0;
+}
+
+.sin-resultados {
+  text-align: center;
+  color: #999;
+  padding: 30px;
+  font-size: 0.9rem;
+}
+
+/* Panel mapa */
+.panel-mapa {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+#mapa {
+  flex: 1;
+  min-height: 400px;
+}
+
+.ayuda-mapa {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #999;
+  margin: 6px 0;
+  padding: 0 10px;
+}
+
+/* Estados vacíos */
+.sin-bolsines {
+  text-align: center;
+  padding: 60px 20px;
+  color: #888;
+  font-size: 1rem;
+}
+
+.cargando {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.spinner {
+  width: 42px;
+  height: 42px;
+  border: 4px solid #e0e0e0;
+  border-top-color: #1a237e;
+  border-radius: 50%;
+  animation: girar 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes girar {
+  to { transform: rotate(360deg); }
+}
+
+/* Diálogo de confirmación de email */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.dialogo {
+  background: white;
+  border-radius: 10px;
+  padding: 28px 32px;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+
+.dialogo h3 {
+  margin: 0 0 14px 0;
+  color: #1a237e;
+  font-size: 1.1rem;
+}
+
+.dialogo p {
+  color: #444;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 22px;
+}
+
+.dialogo-acciones {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-confirmar {
+  background: #1a237e;
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-confirmar:hover { background: #283593; }
+
+.btn-cancelar {
+  background: #f5f5f5;
+  color: #444;
+  border: 1px solid #ccc;
+  padding: 10px 22px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.btn-cancelar:hover { background: #eeeeee; }
+
+/* Popup de Leaflet */
+:global(.popup-bolsin) {
+  font-size: 0.85rem;
+  line-height: 1.6;
+}

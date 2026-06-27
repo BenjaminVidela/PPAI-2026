@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Angular CU36",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "ng serve --port 4200"],
+      "port": 4200
+    }
+  ]
+}
