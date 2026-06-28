@@ -22,13 +22,13 @@ L.Icon.Default.mergeOptions({
 export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nombreCMUsuarioLogueado: string = '';
-  bolsines: BolsinDTO[] = [];
+  posicionBolsin: BolsinDTO[] = [];
   bolsinSeleccionado: BolsinDTO | null = null;
   realizacionExitosaDelCU: string = '';
 
   cargando: boolean = false;
   error: string = '';
-  mostrandoDialogoEmail: boolean = false;
+  confirmacionEmail: boolean = false;
   filtroPrecinto: string = '';
   filtroCMDestino: string = '';
 
@@ -47,7 +47,6 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    // Mapa se inicializa en mostrarPosicionBolsin(), cuando el contenedor ya es visible
   }
 
   ngOnDestroy(): void {
@@ -57,7 +56,6 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  // Mensaje 1 del diagrama de secuencia
   opcionConsultarSeguimiento(): void {
     this.habilitarVentana();
 
@@ -71,6 +69,7 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         this.mostrarCMUsuarioLogueado(response.nombreCMUsuarioLogueado ?? '');
         this.mostrarPosicionBolsin(response.bolsines ?? []);
+
         this.solicitarSeleccionBolsin();
       },
       error: () => {
@@ -81,23 +80,20 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Mensaje 2 del diagrama de secuencia
   habilitarVentana(): void {
     this.cargando = true;
     this.error = '';
     this.realizacionExitosaDelCU = '';
-    this.bolsines = [];
+    this.posicionBolsin = [];
   }
 
-  // Mensaje 9 del diagrama de secuencia
   mostrarCMUsuarioLogueado(nombre: string): void {
     this.nombreCMUsuarioLogueado = nombre;
     this.cdr.markForCheck();
   }
 
-  // Mensaje 26 del diagrama de secuencia
   mostrarPosicionBolsin(bolsines: BolsinDTO[]): void {
-    this.bolsines = bolsines;
+    this.posicionBolsin = bolsines;
     this.cdr.markForCheck();
     setTimeout(() => {
       this.inicializarMapa();
@@ -106,13 +102,11 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 150);
   }
 
-  // Mensaje 27 del diagrama de secuencia
   solicitarSeleccionBolsin(): void {
-    // La pantalla presenta la lista de bolsines y el mapa para que el EB seleccione
   }
 
   get bolsinesFiltrados(): BolsinDTO[] {
-    return this.bolsines.filter(b => {
+    return this.posicionBolsin.filter(b => {
       const filtroPrecinto = this.filtroPrecinto.trim();
       const filtroCM = this.filtroCMDestino.trim().toLowerCase();
       const coincidePrecinto = filtroPrecinto === '' || b.numeroPrecinto.toString().includes(filtroPrecinto);
@@ -121,10 +115,9 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Mensaje 28 del diagrama de secuencia
   tomarSeleccionBolsin(bolsin: BolsinDTO): void {
     this.bolsinSeleccionado = bolsin;
-    this.mostrandoDialogoEmail = false;
+    this.confirmacionEmail = false;
     this.realizacionExitosaDelCU = '';
 
     this.seguimientoService.seleccionarBolsin(bolsin.numeroBolsin).subscribe({
@@ -142,16 +135,14 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Mensaje 31 del diagrama de secuencia
   consultarEnvioEmail(): void {
-    this.mostrandoDialogoEmail = true;
+    this.confirmacionEmail = true;
     this.cdr.markForCheck();
   }
 
-  // Mensaje 33 del diagrama de secuencia
   tomarConfirmacionEmail(confirma: boolean): void {
     if (!this.bolsinSeleccionado) return;
-    this.mostrandoDialogoEmail = false;
+    this.confirmacionEmail = false;
 
     this.seguimientoService.confirmarEmail(this.bolsinSeleccionado.numeroBolsin, confirma).subscribe({
       next: (response: ConsultaSeguimientoResponse) => {
@@ -164,7 +155,6 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Mensaje 43 del diagrama de secuencia
   mostrarRealizacionExitosaDelCU(mensaje: string): void {
     this.realizacionExitosaDelCU = mensaje;
     this.cdr.markForCheck();
@@ -200,7 +190,7 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const bounds: [number, number][] = [];
 
-    this.bolsines.forEach(bolsin => {
+    this.posicionBolsin.forEach(bolsin => {
       if (bolsin.latitud && bolsin.longitud) {
         const marker = L.marker([bolsin.latitud, bolsin.longitud])
           .addTo(this.mapa!)
