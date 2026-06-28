@@ -63,6 +63,10 @@ public class DataRepository {
         bolsines.addAll(Arrays.asList(b1, b2, b3, b4));
     }
 
+    public List<Bolsin> getAllBolsines() {
+        return bolsines;
+    }
+
     public List<Bolsin> getBolsinesEnviadosPorCM(String codigoCM) {
         List<Bolsin> resultado = new ArrayList<>();
         for (Bolsin b : bolsines) {
