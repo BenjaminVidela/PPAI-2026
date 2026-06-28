@@ -27,44 +27,58 @@ public class GestorSeguimiento {
     @Autowired
     private GoogleMapsBoundary googleMaps;
 
+    private List<Bolsin> bolsinesEnviados;
+    private Bolsin bolsinSeleccionado;
+    private ComisionMedica CMDestino;
+    private String CMOrigen;
+    private String fechaHoraActual;
+    private String nombreCMUsuarioLogueado;
+    private int numeroBolsin;
+    private int numeroPrecinto;
+    private List<BolsinLocalizacion> posicionBolsin;
+
     public ConsultaSeguimientoResponse crearConsultaSeguimiento() {
-        String nombreCM = buscarNombreCMUsuarioOrigen();
-        if (nombreCM == null) {
+        this.nombreCMUsuarioLogueado = buscarNombreCMUsuarioOrigen();
+        if (this.nombreCMUsuarioLogueado == null) {
             return new ConsultaSeguimientoResponse("No hay sesión activa.");
         }
 
-        String codigoCM = buscarBolsinCMOrigen();
-        List<Bolsin> bolsinesEnviados = buscarBolsinesEnviados(codigoCM);
+        this.CMOrigen = buscarBolsinCMOrigen();
+        this.bolsinesEnviados = buscarBolsinesEnviados(this.CMOrigen);
 
-        if (bolsinesEnviados.isEmpty()) {
+        if (this.bolsinesEnviados.isEmpty()) {
             ConsultaSeguimientoResponse resp = new ConsultaSeguimientoResponse();
-            resp.setNombreCMUsuarioLogueado(nombreCM);
+            resp.setNombreCMUsuarioLogueado(this.nombreCMUsuarioLogueado);
             resp.setMensaje("No hay bolsines en estado Enviado para su comisión.");
             resp.setBolsines(new ArrayList<>());
             return resp;
         }
 
         List<Integer> numeros = new ArrayList<>();
-        for (Bolsin b : bolsinesEnviados) {
+        for (Bolsin b : this.bolsinesEnviados) {
             numeros.add(b.getNumeroBolsin());
         }
 
-        List<BolsinLocalizacion> localizaciones = obtenerDatosLocalizacionBolsines(numeros, codigoCM);
-        localizaciones = obtenerMapa(localizaciones);
+        this.posicionBolsin = obtenerDatosLocalizacionBolsines(numeros, this.CMOrigen);
+        this.posicionBolsin = obtenerMapa(this.posicionBolsin);
 
-        List<BolsinDTO> dtos = armarBolsinDTOs(bolsinesEnviados, localizaciones);
+        List<BolsinDTO> dtos = armarBolsinDTOs(this.bolsinesEnviados, this.posicionBolsin);
 
         ConsultaSeguimientoResponse response = new ConsultaSeguimientoResponse();
-        response.setNombreCMUsuarioLogueado(nombreCM);
+        response.setNombreCMUsuarioLogueado(this.nombreCMUsuarioLogueado);
         response.setBolsines(dtos);
         return response;
     }
 
     public ConsultaSeguimientoResponse tomarSeleccionBolsin(int numeroBolsin) {
-        Bolsin seleccionado = dataRepository.getBolsinPorNumero(numeroBolsin);
-        if (seleccionado == null) {
+        this.bolsinSeleccionado = dataRepository.getBolsinPorNumero(numeroBolsin);
+        if (this.bolsinSeleccionado == null) {
             return new ConsultaSeguimientoResponse("Bolsín no encontrado.");
         }
+
+        this.numeroBolsin = this.bolsinSeleccionado.getNumeroBolsin();
+        this.numeroPrecinto = this.bolsinSeleccionado.getNumeroPrecinto();
+        this.CMDestino = this.bolsinSeleccionado.obtenerCMDestino();
 
         enviarEmail();
 
@@ -72,10 +86,10 @@ public class GestorSeguimiento {
         response.setMensaje("¿Desea notificar al GCM destino la ubicación del bolsín?");
 
         BolsinDTO dto = new BolsinDTO();
-        dto.setNumeroBolsin(seleccionado.getNumeroBolsin());
-        dto.setNumeroPrecinto(seleccionado.getNumeroPrecinto());
-        if (seleccionado.obtenerCMDestino() != null) {
-            dto.setCmDestinoNombre(seleccionado.obtenerCMDestino().getNombre());
+        dto.setNumeroBolsin(this.numeroBolsin);
+        dto.setNumeroPrecinto(this.numeroPrecinto);
+        if (this.CMDestino != null) {
+            dto.setCmDestinoNombre(this.CMDestino.getNombre());
         }
         response.setBolsines(List.of(dto));
         return response;
@@ -91,8 +105,8 @@ public class GestorSeguimiento {
         }
 
         String emailDestino = buscarDireccionCorreo(numeroBolsin);
-        String fechaHoraActual = getFechaHoraActual();
-        String resultado = llamarCUNotificarUbicacionDeBolsin(emailDestino, fechaHoraActual);
+        getFechaHoraActual();
+        String resultado = llamarCUNotificarUbicacionDeBolsin(emailDestino, this.fechaHoraActual);
 
         response.setMensaje(resultado);
         finCU();
@@ -139,12 +153,9 @@ public class GestorSeguimiento {
     }
 
     private void enviarEmail() {
-        // Mensaje 30 del diagrama de secuencia.
-        // En E1 no hay envío real — la integración con Outlook Microsoft Graph se implementa en E2.
     }
 
     private String llamarCUNotificarUbicacionDeBolsin(String emailDestino, String fechaHora) {
-        // Mensaje 41 — <<include>> CU31 Notificar Ubicación de Bolsín. Simulado en E1.
         if (emailDestino != null) {
             return "Notificación preparada para: " + emailDestino + " | Fecha: " + fechaHora;
         }
@@ -152,8 +163,6 @@ public class GestorSeguimiento {
     }
 
     private void finCU() {
-        // Mensaje 44 del diagrama de secuencia. Finaliza el caso de uso.
-        // En arquitectura REST stateless no hay estado local que limpiar.
     }
 
     private String buscarDireccionCorreo(int numeroBolsin) {
@@ -163,7 +172,8 @@ public class GestorSeguimiento {
     }
 
     private String getFechaHoraActual() {
-        return LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        this.fechaHoraActual = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"));
+        return this.fechaHoraActual;
     }
 
     private List<BolsinDTO> armarBolsinDTOs(List<Bolsin> bolsines, List<BolsinLocalizacion> localizaciones) {

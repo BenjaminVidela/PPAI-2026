@@ -27,6 +27,8 @@ public class Empleado {
     }
 
     public ComisionMedica obtenerCM() { return cm; }
+    public ComisionMedica getCM() { return cm; }
+    public String mostrarCM() { return cm != null ? cm.getNombre() : ""; }
     public String getEmail() { return email; }
     public String getNombre() { return nombre; }
     public String getApellido() { return apellido; }

@@ -26,14 +26,27 @@ public class GPSTrackerXTR4500L {
         {-32.8908, -68.8272},
     };
 
+    private double latitud;
+    private double longitud;
+    private int numeroBolsin;
+    private LocalDateTime fechaHoraUltimaUbicacion;
+
+    public void getLocation() {
+        double[] coords = coordenadasSimuladas(this.numeroBolsin);
+        this.latitud = coords[0];
+        this.longitud = coords[1];
+        this.fechaHoraUltimaUbicacion = LocalDateTime.now().minusMinutes(new Random().nextInt(30));
+    }
+
     private BolsinLocalizacion getBolsinLocation(int numeroBolsin, String codigoCMOrigen) {
-        double[] coords = coordenadasSimuladas(numeroBolsin);
+        this.numeroBolsin = numeroBolsin;
+        getLocation();
 
         BolsinLocalizacion loc = new BolsinLocalizacion();
-        loc.setNumeroBolsin(numeroBolsin);
-        loc.setLatitud(coords[0]);
-        loc.setLongitud(coords[1]);
-        loc.setFechaHoraActualizacion(LocalDateTime.now().minusMinutes(new Random().nextInt(30)));
+        loc.setNumeroBolsin(this.numeroBolsin);
+        loc.setLatitud(this.latitud);
+        loc.setLongitud(this.longitud);
+        loc.setFechaHoraActualizacion(this.fechaHoraUltimaUbicacion);
 
         return loc;
     }

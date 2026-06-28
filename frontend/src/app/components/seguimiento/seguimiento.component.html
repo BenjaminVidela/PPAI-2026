@@ -29,13 +29,13 @@
     </div>
   }
 
-  @if (!cargando && bolsines.length === 0 && !error) {
+  @if (!cargando && posicionBolsin.length === 0 && !error) {
     <div class="sin-bolsines">
       No hay bolsines en estado <strong>Enviado</strong> para su comisión médica.
     </div>
   }
 
-  <div class="contenido-principal" [class.oculto]="cargando || bolsines.length === 0">
+  <div class="contenido-principal" [class.oculto]="cargando || posicionBolsin.length === 0">
 
     <div class="panel-lista">
       <div class="filtros">
@@ -90,7 +90,7 @@
           </div>
         }
 
-        @if (bolsinesFiltrados.length === 0 && bolsines.length > 0) {
+        @if (bolsinesFiltrados.length === 0 && posicionBolsin.length > 0) {
           <div class="sin-resultados">
             No hay bolsines que coincidan con el filtro.
           </div>
@@ -104,7 +104,7 @@
     </div>
   </div>
 
-  @if (mostrandoDialogoEmail && bolsinSeleccionado) {
+  @if (confirmacionEmail && bolsinSeleccionado) {
     <div class="overlay">
       <div class="dialogo">
         <h3>Notificar GCM Destino</h3>

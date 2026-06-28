@@ -8,8 +8,14 @@ import java.util.List;
 @Component
 public class GoogleMapsBoundary {
 
+    private List<BolsinLocalizacion> coordenadasGPS;
+
     public List<BolsinLocalizacion> solicitarPosicionBolsinesEnMapa(List<BolsinLocalizacion> localizaciones) {
-        return localizaciones;
+        this.coordenadasGPS = localizaciones;
+        solicitarPosicionBolsines();
+        return this.coordenadasGPS;
     }
 
+    public void solicitarPosicionBolsines() {
+    }
 }
