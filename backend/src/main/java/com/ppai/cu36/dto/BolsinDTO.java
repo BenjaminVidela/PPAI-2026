@@ -8,6 +8,7 @@ public class BolsinDTO {
     private Double latitud;
     private Double longitud;
     private String fechaHoraActualizacion;
+    private String cmOrigenNombre;
 
     public BolsinDTO() {}
 
@@ -17,6 +18,7 @@ public class BolsinDTO {
     public Double getLatitud() { return latitud; }
     public Double getLongitud() { return longitud; }
     public String getFechaHoraActualizacion() { return fechaHoraActualizacion; }
+    public String getCmOrigenNombre() { return cmOrigenNombre; }
 
     public void setNumeroBolsin(int numeroBolsin) { this.numeroBolsin = numeroBolsin; }
     public void setNumeroPrecinto(int numeroPrecinto) { this.numeroPrecinto = numeroPrecinto; }
@@ -26,4 +28,5 @@ public class BolsinDTO {
     public void setFechaHoraActualizacion(String fechaHoraActualizacion) {
         this.fechaHoraActualizacion = fechaHoraActualizacion;
     }
+    public void setCmOrigenNombre(String cmOrigenNombre) { this.cmOrigenNombre = cmOrigenNombre; }
 }

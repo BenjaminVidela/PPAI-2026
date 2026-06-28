@@ -2,12 +2,18 @@
 
   <div class="header">
     <h1>Seguimiento de Bolsines</h1>
-    @if (nombreCMUsuarioLogueado) {
-      <span class="badge-cm">📍 CM: {{ nombreCMUsuarioLogueado }}</span>
-    }
-    <button class="btn-recargar" (click)="opcionConsultarSeguimiento()" [disabled]="cargando">
-      {{ cargando ? 'Cargando...' : '↻ Actualizar' }}
-    </button>
+
+    <div class="header-acciones">
+      @if (nombreUsuarioLogueado && nombreCMUsuarioLogueado) {
+        <span class="badge-usuario">
+          👤 {{ nombreUsuarioLogueado }} ({{ nombreCMUsuarioLogueado }})
+        </span>
+      }
+
+      <button class="btn-recargar" (click)="opcionConsultarSeguimiento()" [disabled]="cargando">
+        {{ cargando ? 'Cargando...' : '↻ Actualizar' }}
+      </button>
+    </div>
   </div>
 
   @if (error) {
@@ -40,12 +46,14 @@
     <div class="panel-lista">
       <div class="filtros">
         <h3>Bolsines Enviados ({{ bolsinesFiltrados.length }})</h3>
+
         <input
           type="text"
           placeholder="Filtrar por precinto..."
           (input)="actualizarFiltros('precinto', $any($event.target).value)"
           class="input-filtro"
         />
+
         <input
           type="text"
           placeholder="Filtrar por CM destino..."
@@ -65,20 +73,32 @@
               <span class="numero-bolsin">Bolsín #{{ bolsin.numeroBolsin }}</span>
               <span class="badge-enviado">Enviado</span>
             </div>
+
             <div class="card-body">
               <div class="dato">
                 <span class="label">Precinto:</span>
                 <span>{{ bolsin.numeroPrecinto }}</span>
               </div>
+
+              <div class="dato">
+                <span class="label">Origen:</span>
+                <span class="cm-origen">{{ bolsin.cmOrigenNombre || 'N/D' }}</span>
+              </div>
+
               <div class="dato">
                 <span class="label">Destino:</span>
                 <span>{{ bolsin.cmDestinoNombre }}</span>
               </div>
+
               @if (bolsin.latitud && bolsin.longitud) {
                 <div class="dato">
                   <span class="label">GPS:</span>
-                  <span class="gps-coords">{{ bolsin.latitud | number:'1.4-4' }}, {{ bolsin.longitud | number:'1.4-4' }}</span>
+                  <span class="gps-coords">
+                    {{ bolsin.latitud | number:'1.4-4' }},
+                    {{ bolsin.longitud | number:'1.4-4' }}
+                  </span>
                 </div>
+
                 <div class="dato">
                   <span class="label">Actualizado:</span>
                   <span class="fecha-hora">{{ bolsin.fechaHoraActualizacion }}</span>
@@ -100,7 +120,9 @@
 
     <div class="panel-mapa">
       <div id="mapa"></div>
-      <p class="ayuda-mapa">Haga clic en un marcador o en un bolsín de la lista para seleccionarlo.</p>
+      <p class="ayuda-mapa">
+        Haga clic en un marcador o en un bolsín de la lista para seleccionarlo.
+      </p>
     </div>
   </div>
 
@@ -113,9 +135,14 @@
           <strong>#{{ bolsinSeleccionado.numeroBolsin }}</strong>
           al GCM de <strong>{{ bolsinSeleccionado.cmDestinoNombre }}</strong>?
         </p>
+
         <div class="dialogo-acciones">
-          <button class="btn-confirmar" (click)="tomarConfirmacionEmail(true)">Sí, enviar email</button>
-          <button class="btn-cancelar" (click)="tomarConfirmacionEmail(false)">No, gracias</button>
+          <button class="btn-confirmar" (click)="tomarConfirmacionEmail(true)">
+            Sí, enviar email
+          </button>
+          <button class="btn-cancelar" (click)="tomarConfirmacionEmail(false)">
+            No, gracias
+          </button>
         </div>
       </div>
     </div>

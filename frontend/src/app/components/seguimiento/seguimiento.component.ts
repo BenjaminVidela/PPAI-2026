@@ -22,6 +22,7 @@ L.Icon.Default.mergeOptions({
 export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
 
   nombreCMUsuarioLogueado: string = '';
+  nombreUsuarioLogueado: string = '';
   bolsines: BolsinDTO[] = [];
   bolsinSeleccionado: BolsinDTO | null = null;
   realizacionExitosaDelCU: string = '';
@@ -70,6 +71,7 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
         this.mostrarCMUsuarioLogueado(response.nombreCMUsuarioLogueado ?? '');
+        this.mostrarNombreUsuarioLogueado(response.nombreUsuarioLogueado ?? '');
         this.mostrarPosicionBolsin(response.bolsines ?? []);
         this.solicitarSeleccionBolsin();
       },
@@ -92,6 +94,11 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
   // Mensaje 9 del diagrama de secuencia
   mostrarCMUsuarioLogueado(nombre: string): void {
     this.nombreCMUsuarioLogueado = nombre;
+    this.cdr.markForCheck();
+  }
+
+  mostrarNombreUsuarioLogueado(nombre: string): void {
+    this.nombreUsuarioLogueado = nombre;
     this.cdr.markForCheck();
   }
 
@@ -202,11 +209,27 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.bolsines.forEach(bolsin => {
       if (bolsin.latitud && bolsin.longitud) {
-        const marker = L.marker([bolsin.latitud, bolsin.longitud])
+
+        const iconoBolsin = L.divIcon({
+          className: 'marker-bolsin-wrapper',
+          html: `
+            <div class="marker-label">#${bolsin.numeroBolsin}</div>
+            <img
+              class="marker-pin"
+              src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png"
+            >
+          `,
+          iconSize: [70, 72],
+          iconAnchor: [35, 72],
+          popupAnchor: [0, -72]
+        });
+
+        const marker = L.marker([bolsin.latitud, bolsin.longitud], { icon: iconoBolsin })
           .addTo(this.mapa!)
           .bindPopup(this.armarPopupBolsin(bolsin));
 
         marker.on('click', () => this.zone.run(() => this.tomarSeleccionBolsin(bolsin)));
+
         this.markers.push(marker);
         bounds.push([bolsin.latitud, bolsin.longitud]);
       }
@@ -222,6 +245,7 @@ export class SeguimientoComponent implements OnInit, AfterViewInit, OnDestroy {
       <div class="popup-bolsin">
         <strong>Bolsín #${bolsin.numeroBolsin}</strong><br>
         Precinto: ${bolsin.numeroPrecinto}<br>
+        Origen: ${bolsin.cmOrigenNombre ?? 'N/D'}<br>
         Destino: ${bolsin.cmDestinoNombre}<br>
         Actualizado: ${bolsin.fechaHoraActualizacion ?? 'N/D'}<br>
         <small>Lat: ${bolsin.latitud?.toFixed(4)}, Lng: ${bolsin.longitud?.toFixed(4)}</small>

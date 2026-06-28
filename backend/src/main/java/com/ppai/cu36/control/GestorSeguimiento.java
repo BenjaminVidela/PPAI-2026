@@ -27,6 +27,16 @@ public class GestorSeguimiento {
     @Autowired
     private GoogleMapsBoundary googleMaps;
 
+    private String buscarNombreUsuarioLogueado() {
+    Sesion sesion = Sesion.getInstancia();
+    if (sesion == null) return null;
+
+    Usuario usuario = sesion.buscarUsuarioLogueado();
+    if (usuario == null) return null;
+
+    return usuario.getNombre();
+}
+
     public ConsultaSeguimientoResponse crearConsultaSeguimiento() {
         String nombreCM = buscarNombreCMUsuarioOrigen();
         if (nombreCM == null) {
@@ -55,6 +65,9 @@ public class GestorSeguimiento {
         List<BolsinDTO> dtos = armarBolsinDTOs(bolsinesEnviados, localizaciones);
 
         ConsultaSeguimientoResponse response = new ConsultaSeguimientoResponse();
+        response.setNombreCMUsuarioLogueado(nombreCM);
+        response.setBolsines(dtos);
+        response.setNombreUsuarioLogueado(buscarNombreUsuarioLogueado());
         response.setNombreCMUsuarioLogueado(nombreCM);
         response.setBolsines(dtos);
         return response;
@@ -172,6 +185,9 @@ public class GestorSeguimiento {
             BolsinDTO dto = new BolsinDTO();
             dto.setNumeroBolsin(b.getNumeroBolsin());
             dto.setNumeroPrecinto(b.getNumeroPrecinto());
+            if (b.getCmOrigen() != null) {
+                dto.setCmOrigenNombre(b.getCmOrigen().getNombre());
+            }
             if (b.obtenerCMDestino() != null) {
                 dto.setCmDestinoNombre(b.obtenerCMDestino().getNombre());
             }
