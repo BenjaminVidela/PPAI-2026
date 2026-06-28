@@ -66,6 +66,7 @@ public class GestorSeguimiento {
 
         ConsultaSeguimientoResponse response = new ConsultaSeguimientoResponse();
         response.setNombreCMUsuarioLogueado(this.nombreCMUsuarioLogueado);
+        response.setNombreUsuarioLogueado(buscarNombreUsuarioLogueado());
         response.setBolsines(dtos);
         return response;
     }
@@ -136,6 +137,14 @@ public class GestorSeguimiento {
         return empleado.obtenerCM().getCodigo();
     }
 
+    private String buscarNombreUsuarioLogueado() {
+        Sesion sesion = Sesion.getInstancia();
+        if (sesion == null) return null;
+        Usuario usuario = sesion.buscarUsuarioLogueado();
+        if (usuario == null) return null;
+        return usuario.getNombre();
+    }
+
     private List<Bolsin> buscarBolsinesEnviados(String codigoCM) {
         List<Bolsin> resultado = new ArrayList<>();
         for (Bolsin b : dataRepository.getAllBolsines()) {
@@ -188,6 +197,9 @@ public class GestorSeguimiento {
             BolsinDTO dto = new BolsinDTO();
             dto.setNumeroBolsin(b.getNumeroBolsin());
             dto.setNumeroPrecinto(b.getNumeroPrecinto());
+            if (b.getCmOrigen() != null) {
+                dto.setCmOrigenNombre(b.getCmOrigen().getNombre());
+            }
             if (b.obtenerCMDestino() != null) {
                 dto.setCmDestinoNombre(b.obtenerCMDestino().getNombre());
             }
