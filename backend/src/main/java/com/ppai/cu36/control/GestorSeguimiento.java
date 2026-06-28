@@ -137,7 +137,13 @@ public class GestorSeguimiento {
     }
 
     private List<Bolsin> buscarBolsinesEnviados(String codigoCM) {
-        return dataRepository.getBolsinesEnviadosPorCM(codigoCM);
+        List<Bolsin> resultado = new ArrayList<>();
+        for (Bolsin b : dataRepository.getAllBolsines()) {
+            if (b.esTuCMOrigen(codigoCM) && b.buscarBolsinesEnviados()) {
+                resultado.add(b);
+            }
+        }
+        return resultado;
     }
 
     private List<BolsinLocalizacion> obtenerDatosLocalizacionBolsines(List<Integer> numeros, String codigoCMOrigen) {
