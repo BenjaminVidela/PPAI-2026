@@ -1,0 +1,151 @@
+<div class="pantalla-seguimiento">
+
+  <div class="header">
+    <h1>Seguimiento de Bolsines</h1>
+
+    <div class="header-acciones">
+      @if (nombreUsuarioLogueado && nombreCMUsuarioLogueado) {
+        <span class="badge-usuario">
+          👤 {{ nombreUsuarioLogueado }} ({{ nombreCMUsuarioLogueado }})
+        </span>
+      }
+
+      <button class="btn-recargar" (click)="opcionConsultarSeguimiento()" [disabled]="cargando">
+        {{ cargando ? 'Cargando...' : '↻ Actualizar' }}
+      </button>
+    </div>
+  </div>
+
+  @if (error) {
+    <div class="alerta-error">
+      <strong>⚠</strong> {{ error }}
+    </div>
+  }
+
+  @if (realizacionExitosaDelCU) {
+    <div class="alerta-exito">
+      <strong>✓</strong> {{ realizacionExitosaDelCU }}
+    </div>
+  }
+
+  @if (cargando) {
+    <div class="cargando">
+      <div class="spinner"></div>
+      <p>Consultando GPS y cargando posiciones...</p>
+    </div>
+  }
+
+  @if (!cargando && posicionBolsin.length === 0 && !error) {
+    <div class="sin-bolsines">
+      No hay bolsines en estado <strong>Enviado</strong> para su comisión médica.
+    </div>
+  }
+
+  <div class="contenido-principal" [class.oculto]="cargando || posicionBolsin.length === 0">
+
+    <div class="panel-lista">
+      <div class="filtros">
+        <h3>Bolsines Enviados ({{ bolsinesFiltrados.length }})</h3>
+
+        <input
+          type="text"
+          placeholder="Filtrar por precinto..."
+          (input)="actualizarFiltros('precinto', $any($event.target).value)"
+          class="input-filtro"
+        />
+
+        <input
+          type="text"
+          placeholder="Filtrar por CM destino..."
+          (input)="actualizarFiltros('cm', $any($event.target).value)"
+          class="input-filtro"
+        />
+      </div>
+
+      <div class="lista-bolsines">
+        @for (bolsin of bolsinesFiltrados; track bolsin.numeroBolsin) {
+          <div
+            class="card-bolsin"
+            [class.seleccionado]="bolsinSeleccionado?.numeroBolsin === bolsin.numeroBolsin"
+            (click)="tomarSeleccionBolsin(bolsin)"
+          >
+            <div class="card-header">
+              <span class="numero-bolsin">Bolsín #{{ bolsin.numeroBolsin }}</span>
+              <span class="badge-enviado">Enviado</span>
+            </div>
+
+            <div class="card-body">
+              <div class="dato">
+                <span class="label">Precinto:</span>
+                <span>{{ bolsin.numeroPrecinto }}</span>
+              </div>
+
+              <div class="dato">
+                <span class="label">Origen:</span>
+                <span class="cm-origen">{{ bolsin.cmOrigenNombre || 'N/D' }}</span>
+              </div>
+
+              <div class="dato">
+                <span class="label">Destino:</span>
+                <span>{{ bolsin.cmDestinoNombre }}</span>
+              </div>
+
+              @if (bolsin.latitud && bolsin.longitud) {
+                <div class="dato">
+                  <span class="label">GPS:</span>
+                  <span class="gps-coords">
+                    {{ bolsin.latitud | number:'1.4-4' }},
+                    {{ bolsin.longitud | number:'1.4-4' }}
+                  </span>
+                </div>
+
+                <div class="dato">
+                  <span class="label">Actualizado:</span>
+                  <span class="fecha-hora">{{ bolsin.fechaHoraActualizacion }}</span>
+                </div>
+              } @else {
+                <div class="sin-gps">⚠ Sin señal GPS</div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (bolsinesFiltrados.length === 0 && posicionBolsin.length > 0) {
+          <div class="sin-resultados">
+            No hay bolsines que coincidan con el filtro.
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="panel-mapa">
+      <div id="mapa"></div>
+      <p class="ayuda-mapa">
+        Haga clic en un marcador o en un bolsín de la lista para seleccionarlo.
+      </p>
+    </div>
+  </div>
+
+  @if (confirmacionEmail && bolsinSeleccionado) {
+    <div class="overlay">
+      <div class="dialogo">
+        <h3>Notificar GCM Destino</h3>
+        <p>
+          ¿Desea enviar la ubicación actual del bolsín
+          <strong>#{{ bolsinSeleccionado.numeroBolsin }}</strong>
+          al GCM de <strong>{{ bolsinSeleccionado.cmDestinoNombre }}</strong>?
+        </p>
+
+        <div class="dialogo-acciones">
+          <button class="btn-confirmar" (click)="tomarConfirmacionEmail(true)">
+            Sí, enviar email
+          </button>
+          <button class="btn-cancelar" (click)="tomarConfirmacionEmail(false)">
+            No, gracias
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>
